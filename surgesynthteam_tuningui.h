@@ -157,35 +157,36 @@ public:
         auto mn = rowNumber;
         double lmn = tuning.logScaledFrequencyForMidiNote( mn );
         double fr  = tuning.frequencyForMidiNote( mn );
-        
-        char txt[256];
+
+        int BUFFER_SIZE = 256;
+        char txt[BUFFER_SIZE];
         
         switch( columnID ) {
         case COLUMNID_NOTE:
         {
-            sprintf( txt, "%d", mn );
+            snprintf( txt, BUFFER_SIZE-1, "%d", mn );
             break;
         }
         case COLUMNID_NAME:
         {
             static std::vector<std::string> nn = { { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" } };
-            sprintf( txt, "%s%d", nn[noteInScale].c_str(), (int)(rowNumber / 12 ) - 1 );
+            snprintf( txt, BUFFER_SIZE-1, "%s%d", nn[noteInScale].c_str(), (int)(rowNumber / 12 ) - 1 );
             break;
         }
         case COLUMNID_FREQ:
         {
             if (fr < 1.0E+5)
-                sprintf( txt, "%.4lf", fr );
+                snprintf(txt, BUFFER_SIZE-1, "%.4lf", fr );
             else
-                sprintf(txt, "%12.6e", fr);
+                snprintf(txt, BUFFER_SIZE-1, "%12.6e", fr);
             break;
         }
         case COLUMNID_LOG2F:
         {
             if (lmn < 1.0E+5)
-                sprintf(txt, "%.6lf", lmn);
+                snprintf(txt, BUFFER_SIZE-1, "%.6lf", lmn);
             else
-                sprintf(txt, "%12.6e", lmn);
+                snprintf(txt, BUFFER_SIZE-1, "%12.6e", lmn);
             break;
         }
         }
@@ -197,7 +198,7 @@ public:
             g.fillRect (0, height - 1, width, 1 );
     }
 
-    virtual void cellClicked (int rowNumber, int columnId, const juce::MouseEvent & e) override {
+    void cellClicked (int rowNumber, int columnId, const juce::MouseEvent & e) override {
         if( e.mods.isRightButtonDown() )
         {
             rmbMenu->clear();
@@ -273,7 +274,7 @@ public:
         notesOn[noteNum] = false;
         triggerAsyncUpdate();
     }
-    virtual void handleAsyncUpdate() override {
+    void handleAsyncUpdate() override {
         if( table )
             table->repaint();
     }
